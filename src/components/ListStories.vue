@@ -1,24 +1,27 @@
 <template>
   <div class="hello">
     <table>
-      <tr>
-        <th colspan="3">Fresh and Niche</th>
-        <th colspan="3">Popular</th>
-      </tr>
-      <tr v-for="loHi in zippedStories()" :key="(loHi[0] || loHi[1]).id">
-        <template v-for="i in [0, 1]">
-          <template v-if="loHi[i]">
-            <td :key="`a${loHi[i].id}`">{{ loHi[i].score }}</td>
-            <td :key="`b${loHi[i].id}`"><small><a :href="itemLink(loHi[i])">({{ loHi[i].descendants }})</a></small></td>
-            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])">{{ loHi[i].deleted && '(deleted)' || loHi[i].title }}</a></td>
+      <template v-for="dateStories in storiesByDate(this.$store.topStories)">
+        <tr>
+          <th colspan="6">{{ dateStories.dateString }}</th>
+        </tr>
+        <tr>
+          <th colspan="3">Niche / Fresh</th>
+          <th colspan="3">More Popular</th>
+        </tr>
+        <tr v-for="loHi in zippedStories(dateStories.stories)" :key="(loHi[0] || loHi[1]).id">
+          <template v-for="i in [0, 1]">
+            <template v-if="loHi[i]">
+              <td :key="`a${loHi[i].id}`" align="right">{{ loHi[i].score }}</td>
+              <td :key="`b${loHi[i].id}`" align="center"><small><a :href="itemLink(loHi[i])">({{ loHi[i].descendants }})</a></small></td>
+              <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])">{{ loHi[i].deleted && '(deleted)' || loHi[i].title }}</a></td>
+            </template>
+            <template v-else>
+              <td :key="`_${i}`" colspan="3"></td>
+            </template>
           </template>
-          <template v-else>
-            <td :key="`x${i}`"></td>
-            <td :key="`y${i}`"></td>
-            <td :key="`z${i}`"></td>
-          </template>
-        </template>
-      </tr>
+        </tr>
+      </template>
     </table>
   </div>
 </template>
@@ -46,23 +49,23 @@ export default class ListStories extends Vue {
     return story.url || `https://news.ycombinator.com/item?id=${story.id}`
   }
 
-  zippedStories() {
-    if (!this.$store.topStories) {
+  zippedStories(stories) {
+    if (!stories) {
       return []
     }
-    const scores = this.$store.topStories.map(s => s.score).sort((a, b) => a - b)
+    const scores = stories.map(s => s.score).sort((a, b) => a - b)
     const medScore = scores[Math.ceil(scores.length / 2)]
     const lo: any[] = []
     const hi: any[] = []
-    for (const s of this.$store.topStories) {
+    for (const s of stories) {
       if (s.score < medScore) {
         lo.push(s)
       } else {
         hi.push(s)
       }
     }
-    lo.sort((a, b) => a.score - b.score)
-    hi.sort((a, b) => b.score - a.score)
+    lo.sort((a, b) => b.score - a.score)
+    hi.sort((a, b) => a.score - b.score)
     const m = Math.max(lo.length, hi.length)
     const zipped: any[] = []
     for (let i = 0; i < m; i++) {
@@ -71,6 +74,34 @@ export default class ListStories extends Vue {
       zipped.push([l, h])
     }
     return zipped
+  }
+
+  storiesByDate(stories) {
+    if (!stories) {
+      return []
+    }
+    const dates: any[] = []
+    const byDate = {}
+    const dateString = {}
+    for (const story of stories) {
+      const date = this.localeISODateString(story.time)
+      const dayStories = byDate[date] || []
+      if (dayStories.length === 0) {
+        byDate[date] = dayStories
+        dates.push(date)
+        dateString[date] = new Date(story.time * 1000)
+          .toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      }
+      dayStories.push(story)
+    }
+    dates.sort()
+    dates.reverse()
+
+    const storiesByDate: any[] = []
+    for (const d of dates) {
+      storiesByDate.push({ date: d, dateString: dateString[d], stories: byDate[d] })
+    }
+    return storiesByDate
   }
 
   loadStories() {
@@ -123,6 +154,14 @@ export default class ListStories extends Vue {
       onLoad(xhr.status, xhr.responseText)
     }
     xhr.send()
+  }
+
+  localeISODateString(unixTime) {
+    const d = new Date(unixTime * 1000)
+    const mm = 1 + d.getMonth() < 10 ? `0${1 + d.getMonth()}` : `${1 + d.getMonth()}`
+    const dd = d.getDate() < 10 ? `0${d.getDate()}` : `${d.getDate()}`
+    const s = `${d.getFullYear()}-${mm}-${dd}`
+    return s
   }
 }
 </script>
