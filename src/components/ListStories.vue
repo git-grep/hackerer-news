@@ -61,32 +61,13 @@ export default class ListStories extends Vue {
     if (!stories) {
       return []
     }
-    const lo: any[] = []
-    const hi: any[] = []
+    const scored = stories.sort((a, b) => a.score === b.score ? a.time - b.time : a.score - b.score)
+    const m = Math.ceil(scored.length / 2)
+    const lo = scored.slice(0, m)
+    const hi = scored.slice(m)
+    hi.reverse()
     if (index === 0) {
-      const times = stories.map(s => s.time).sort((a, b) => a - b)
-      const medTime = times[Math.ceil(times.length / 2)]
-      for (const s of stories) {
-        if (s.time < medTime) {
-          lo.push(s)
-        } else {
-          hi.push(s)
-        }
-      }
-      lo.sort((a, b) => b.time - a.time)
-      hi.sort((a, b) => b.score - a.score)
-    } else {
-      const scores = stories.map(s => s.score).sort((a, b) => a - b)
-      const medScore = scores[Math.ceil(scores.length / 2)]
-      for (const s of stories) {
-        if (s.score < medScore) {
-          lo.push(s)
-        } else {
-          hi.push(s)
-        }
-      }
-      lo.sort((a, b) => b.score - a.score)
-      hi.sort((a, b) => a.score - b.score)
+      lo.sort((a, b) => a.time - b.time)
     }
 
     const n = Math.max(lo.length, hi.length)
