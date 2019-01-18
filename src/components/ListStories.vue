@@ -67,7 +67,7 @@ export default class ListStories extends Vue {
     const hi = scored.slice(m)
     hi.reverse()
     if (index === 0) {
-      lo.sort((a, b) => a.time - b.time)
+      lo.sort((a, b) => b.time - a.time)
     }
 
     const n = Math.max(lo.length, hi.length)
