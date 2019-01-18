@@ -11,8 +11,8 @@
       <tr v-for="loHi in zippedStories(dateStories.stories, index)" :key="(loHi[0] || loHi[1]).id">
         <template v-for="i in [0, 1]">
           <template v-if="loHi[i]">
-            <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" class="score">{{ loHi[i].score }}</a></td>
-            <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" class="comments">{{ loHi[i].descendants || '⁺' }}</a></td>
+            <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
+            <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" target="hn" class="comments">{{ loHi[i].descendants || '⁺' }}</a></td>
             <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
           </template>
           <template v-else>
@@ -34,7 +34,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 })
 export default class ListStories extends Vue {
   time = ''
-  newestStoryISODate = ''
+  newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
 
   mounted() {
     this.tick()
@@ -69,7 +69,11 @@ export default class ListStories extends Vue {
     hi.reverse()
     if (index === 0) {
       lo.sort((a, b) => b.time - a.time)
-      this.newestStoryISODate = this.localeISODateString(lo[0].time)
+      const newestStoryISODate = this.localeISODateString(lo[0].time)
+      if (newestStoryISODate !== this.newestStoryISODate) {
+        this.newestStoryISODate = newestStoryISODate
+        this.tick()
+      }
     }
 
     const n = Math.max(lo.length, hi.length)
