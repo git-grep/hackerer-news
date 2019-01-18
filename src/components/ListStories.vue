@@ -34,6 +34,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 })
 export default class ListStories extends Vue {
   time = ''
+  newestStoryISODate = ''
 
   mounted() {
     this.tick()
@@ -68,6 +69,7 @@ export default class ListStories extends Vue {
     hi.reverse()
     if (index === 0) {
       lo.sort((a, b) => b.time - a.time)
+      this.newestStoryISODate = this.localeISODateString(lo[0].time)
     }
 
     const n = Math.max(lo.length, hi.length)
@@ -93,8 +95,7 @@ export default class ListStories extends Vue {
       if (dayStories.length === 0) {
         byDate[date] = dayStories
         dates.push(date)
-        dateString[date] = new Date(story.time * 1000)
-          .toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+        dateString[date] = this.shortDate(new Date(story.time * 1000))
       }
       dayStories.push(story)
     }
@@ -176,12 +177,21 @@ export default class ListStories extends Vue {
   }
 
   tick() {
-    this.time = new Date().toLocaleTimeString().replace(/:[0-5][0-9] /, ' ').toLowerCase()
+    const d = new Date()
+    let time = d.toLocaleTimeString().replace(/:[0-5][0-9] /, ' ').toLowerCase()
+    const date = this.localeISODateString(d.getTime() / 1000)
+    if (date !== this.newestStoryISODate) {
+      time = this.shortDate(d) + ' ' + time
+    }
+    this.time = time
     setInterval(this.tick, 10000)
   }
 
   currentTime(index) {
     return index ? '' : this.time
+  }
+  shortDate(d) {
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
   }
 
   localeISODateString(unixTime) {
