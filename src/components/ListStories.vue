@@ -188,7 +188,7 @@ export default class ListStories extends Vue {
     if (index) {
       return {position: 'absolute', 'margin-top': '8px', width: '95.5%'}
     } else {
-      return {display: 'inline-block'}
+      return {position: 'absolute', 'margin-top': '-4px', width: '95.5%'}
     }
   }
 
@@ -244,10 +244,12 @@ export default class ListStories extends Vue {
 }
 .left-time {
   float: left;
+  margin-top: -4px;
   visibility: hidden;
 }
 .right-time {
   float: right;
+  margin-top: -4px;
   color: #808080;
 }
 .column-heading {

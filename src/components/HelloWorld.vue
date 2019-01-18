@@ -14,7 +14,7 @@ export default class HelloWorld extends Vue {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h1 {
-  margin: 0 5px;
+  margin: 3px 5px;
   font-size: 18pt;
   color: #777;
 }
