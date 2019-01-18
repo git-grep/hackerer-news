@@ -186,9 +186,9 @@ export default class ListStories extends Vue {
 
   dateStyle(index) {
     if (index) {
-      return {position: 'absolute', 'margin-top': '8px', width: '95.5%'}
+      return {position: 'absolute', 'margin-top': '8px', 'margin-left': '37.5%', width: '25%'}
     } else {
-      return {position: 'absolute', 'margin-top': '-4px', width: '95.5%'}
+      return {position: 'absolute', 'margin-top': '-4px', 'margin-left': '37.5%', width: '25%'}
     }
   }
 
