@@ -166,7 +166,12 @@ export default class ListStories extends Vue {
         }
       }
       result.remaining--
-      if (result.remaining % 10 === 0) {
+      let batchSize = 10
+      const total = this.$store.topStories.length + result.stories.length
+      if (total >= 120) {
+        batchSize = 50
+      }
+      if (result.remaining % batchSize === 0) {
         for (const story of result.stories) {
           this.$store.topStories.push(story)
         }
@@ -200,7 +205,7 @@ export default class ListStories extends Vue {
       time = this.shortDate(d) + ' ' + time
     }
     this.time = time
-    setInterval(this.tick, 10000)
+    setTimeout(this.tick, 1 + (60 - d.getSeconds()) * 1000)
   }
 
   currentTime(index) {
