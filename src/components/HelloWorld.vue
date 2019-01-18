@@ -1,5 +1,5 @@
 <template>
-  <h1>Hackerer.news</h1>
+  <h1>Hackerer.<a href="https://news.ycombinator.com/newest" target="hn">new</a>s</h1>
 </template>
 
 <script lang="ts">
@@ -30,6 +30,7 @@ li {
   margin: 0 10px;
 }
 a {
-  color: #42b983;
+  text-decoration: none;
+  color: #777;
 }
 </style>
