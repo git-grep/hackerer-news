@@ -174,7 +174,7 @@ export default class ListStories extends Vue {
 
   dateStyle(index) {
     if (index) {
-      return {position: 'absolute', 'margin-top': '8px', width: '100%'}
+      return {position: 'absolute', 'margin-top': '8px', width: '95.5%'}
     } else {
       return {display: 'inline-block'}
     }
