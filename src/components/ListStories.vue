@@ -5,7 +5,7 @@
         <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="left-time">{{ currentTime(index) }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
       </tr>
       <tr>
-        <th colspan="3" class="column-heading">Niche / Fresh</th>
+        <th colspan="3" class="column-heading">{{ index ? 'Niche' : 'Niche / Fresh' }}</th>
         <th colspan="3" class="column-heading">More Popular</th>
       </tr>
       <tr v-for="loHi in zippedStories(dateStories.stories)" :key="(loHi[0] || loHi[1]).id">
@@ -130,6 +130,7 @@ export default class ListStories extends Vue {
         break
       }
       default: {
+        // tslint:disable-next-line:no-console
         console.log(`Unrecognized type ${story.type} of item: ${JSON.stringify(story)}`)
         break
       }

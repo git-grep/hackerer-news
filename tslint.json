@@ -17,6 +17,7 @@
     "no-consecutive-blank-lines": false,
     "arrow-parens": [true, "ban-single-arg-parens"],
     "member-access": false,
+    "object-literal-key-quotes": [true, "as-needed"],
     "semicolon": [true, "never"],
     "no-unexpected-multiline": true
   }
