@@ -66,14 +66,17 @@ export default class ListStories extends Vue {
     const m = Math.ceil(scored.length / 2)
     const lo = scored.slice(0, m)
     const hi = scored.slice(m)
-    hi.reverse()
     if (index === 0) {
       lo.sort((a, b) => b.time - a.time)
+      hi.sort((a, b) => b.time - a.time)
+
       const newestStoryISODate = this.localeISODateString(lo[0].time)
       if (newestStoryISODate !== this.newestStoryISODate) {
         this.newestStoryISODate = newestStoryISODate
         this.tick()
       }
+    } else {
+      hi.reverse()
     }
 
     const n = Math.max(lo.length, hi.length)
