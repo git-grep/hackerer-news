@@ -166,10 +166,12 @@ export default class ListStories extends Vue {
         }
       }
       result.remaining--
-      let batchSize = 10
+      let batchSize = 60
       const total = this.$store.topStories.length + result.stories.length
-      if (total >= 120) {
-        batchSize = 50
+      if (total < 140) {
+        batchSize = 10
+      } else if (total < 200) {
+        batchSize = 20
       }
       if (result.remaining % batchSize === 0) {
         for (const story of result.stories) {
