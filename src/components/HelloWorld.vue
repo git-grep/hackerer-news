@@ -1,7 +1,5 @@
 <template>
-  <div class="hello">
-    <h1>Hackerer.News</h1>
-  </div>
+  <h1>Hackerer.news</h1>
 </template>
 
 <script lang="ts">
@@ -17,6 +15,8 @@ export default class HelloWorld extends Vue {
 <style scoped>
 h1 {
   margin: 0 5px;
+  font-size: 18pt;
+  color: #777;
 }
 h3 {
   margin: 40px 0 0;
