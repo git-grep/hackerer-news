@@ -1,19 +1,19 @@
 <template>
   <table align="center" style="margin-top: -23px">
     <template v-for="(dateStories, index) in storiesByDate(this.$store.topStories)">
-      <tr>
+      <tr :key="dateStories.date+'d'">
         <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="left-time">{{ currentTime(index) }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
       </tr>
-      <tr>
-        <th colspan="3" class="column-heading">{{ index ? 'Niche' : 'Niche / Fresh' }}</th>
-        <th colspan="3" class="column-heading">More Popular</th>
+      <tr :key="dateStories.date+'h'">
+        <th colspan="3" class="column-heading">{{ index ? 'Niche' : 'Fresh' }}</th>
+        <th colspan="3" class="column-heading">Popular</th>
       </tr>
-      <tr v-for="loHi in zippedStories(dateStories.stories)" :key="(loHi[0] || loHi[1]).id">
+      <tr v-for="loHi in zippedStories(dateStories.stories, index)" :key="(loHi[0] || loHi[1]).id">
         <template v-for="i in [0, 1]">
           <template v-if="loHi[i]">
-            <td :key="`a${loHi[i].id}`" align="right">{{ loHi[i].score }}</td>
-            <td :key="`b${loHi[i].id}`" align="center"><small><a :href="itemLink(loHi[i])" class="comments">{{ loHi[i].descendants || '' }}</a></small></td>
-            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])"><div class="title-domain"><span>{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
+            <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" class="score">{{ loHi[i].score }}</a></td>
+            <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" class="comments">{{ loHi[i].descendants || '⁺' }}</a></td>
+            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
           </template>
           <template v-else>
             <td :key="`_${i}`" colspan="3"></td>
@@ -33,9 +33,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
   },
 })
 export default class ListStories extends Vue {
-  @Prop() private msg!: string
+  time = ''
 
   mounted() {
+    this.tick()
     this.loadStories()
   }
 
@@ -56,26 +57,41 @@ export default class ListStories extends Vue {
     return story.url || `https://news.ycombinator.com/item?id=${story.id}`
   }
 
-  zippedStories(stories) {
+  zippedStories(stories, index) {
     if (!stories) {
       return []
     }
-    const scores = stories.map(s => s.score).sort((a, b) => a - b)
-    const medScore = scores[Math.ceil(scores.length / 2)]
     const lo: any[] = []
     const hi: any[] = []
-    for (const s of stories) {
-      if (s.score < medScore) {
-        lo.push(s)
-      } else {
-        hi.push(s)
+    if (index === 0) {
+      const times = stories.map(s => s.time).sort((a, b) => a - b)
+      const medTime = times[Math.ceil(times.length / 2)]
+      for (const s of stories) {
+        if (s.time < medTime) {
+          lo.push(s)
+        } else {
+          hi.push(s)
+        }
       }
+      lo.sort((a, b) => b.time - a.time)
+      hi.sort((a, b) => b.score - a.score)
+    } else {
+      const scores = stories.map(s => s.score).sort((a, b) => a - b)
+      const medScore = scores[Math.ceil(scores.length / 2)]
+      for (const s of stories) {
+        if (s.score < medScore) {
+          lo.push(s)
+        } else {
+          hi.push(s)
+        }
+      }
+      lo.sort((a, b) => b.score - a.score)
+      hi.sort((a, b) => a.score - b.score)
     }
-    lo.sort((a, b) => b.score - a.score)
-    hi.sort((a, b) => a.score - b.score)
-    const m = Math.max(lo.length, hi.length)
+
+    const n = Math.max(lo.length, hi.length)
     const zipped: any[] = []
-    for (let i = 0; i < m; i++) {
+    for (let i = 0; i < n; i++) {
       const l = (i < lo.length) && lo[i]
       const h = (i < hi.length) && hi[i]
       zipped.push([l, h])
@@ -178,11 +194,13 @@ export default class ListStories extends Vue {
     }
   }
 
+  tick() {
+    this.time = new Date().toLocaleTimeString().replace(/:[0-5][0-9] /, ' ').toLowerCase()
+    setInterval(this.tick, 10000)
+  }
+
   currentTime(index) {
-    if (index) {
-      return ''
-    }
-    return new Date().toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}).toLowerCase()
+    return index ? '' : this.time
   }
 
   localeISODateString(unixTime) {
@@ -197,18 +215,25 @@ export default class ListStories extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.score {
+  font-size: 11px;
+}
 .comments {
-  color: #808080
+  color: #aaaaaa;
+  font-size: 10px;
 }
 .title-domain {
   width: 44vw;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.title {
+  font-size: 10pt;
+}
 .item-domain {
   margin-left: 5px;
   font-size: 11px;
-  color: #a0a0a0;
+  color: #aaaaaa;
 }
 .left-time {
   float: left;
