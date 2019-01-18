@@ -62,7 +62,7 @@ export default class ListStories extends Vue {
     if (!stories) {
       return []
     }
-    const scored = stories.sort((a, b) => a.score === b.score ? a.time - b.time : a.score - b.score)
+    const scored = stories.sort((a, b) => a.score === b.score ? b.time - a.time : a.score - b.score)
     const m = Math.ceil(scored.length / 2)
     const lo = scored.slice(0, m)
     const hi = scored.slice(m)
