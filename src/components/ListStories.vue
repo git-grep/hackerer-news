@@ -147,22 +147,30 @@ export default class ListStories extends Vue {
       if (status === 200 && responseText) {
         const storyIds = JSON.parse(responseText)
         storyIds.sort((a, b) => b - a)
-        const stories: any[] = []
+        this.$store.topStories.length = 0
+
+        const result = {remaining: storyIds.length, stories: []}
         for (const id of storyIds) {
-          this.loadStory(id, stories)
+          this.loadStory(id, result)
         }
-        this.$store.topStories = stories
       }
     })
   }
 
-  loadStory(storyId, stories) {
+  loadStory(storyId, result) {
     this.getUrl(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`, (status, responseText) => {
       if (status === 200 && responseText) {
         const story = JSON.parse(responseText)
         if (story) {
-          this.addStory(story, stories)
+          this.addStory(story, result.stories)
         }
+      }
+      result.remaining--
+      if (result.remaining % 10 === 0) {
+        for (const story of result.stories) {
+          this.$store.topStories.push(story)
+        }
+        result.stories.length = 0
       }
     })
   }
