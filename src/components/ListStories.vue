@@ -13,7 +13,7 @@
           <template v-if="loHi[i]">
             <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
             <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" target="hn" class="comments">{{ loHi[i].descendants || '⁺' }}</a></td>
-            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
+            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
           </template>
           <template v-else>
             <td :key="`_${i}`" colspan="3"></td>
