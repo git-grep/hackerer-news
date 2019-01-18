@@ -10,6 +10,16 @@ body {
 }
 #app {
   font-family: sans-serif;
-  -webkit-font-smoothing: subpixel-antialiased;
+}
+@media (min-resolution: 192dpi) {
+  #app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+@media (max-resolution: 191dpi) {
+  #app {
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
 }
 </style>
