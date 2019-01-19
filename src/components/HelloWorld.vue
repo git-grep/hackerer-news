@@ -1,5 +1,5 @@
 <template>
-  <h1>Hackerer.<a href="https://news.ycombinator.com/newest" target="hn">new</a>s</h1>
+  <h1><img src="/favicon.png" class="H"/>ackerer.<a href="https://news.ycombinator.com/newest" target="hn">new</a>s</h1>
 </template>
 
 <script lang="ts">
@@ -13,6 +13,12 @@ export default class HelloWorld extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.H {
+  margin-left: 2px;
+  margin-right: 1.25px;
+  width: 26px;
+  height: 27px;
+}
 h1 {
   margin: 3px 5px;
   font-size: 18pt;
