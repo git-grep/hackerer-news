@@ -26,6 +26,15 @@
           </template>
         </tr>
       </template>
+      <tr :key="`as${index}`">
+        <td>
+          <InFeedAdsense
+            data-ad-layout-key="-fg+5n+6t-e7+r"
+            data-ad-client="ca-pub-7698401419914104"
+            data-ad-slot="1234567890">
+        </InFeedAdsense>
+        </td>
+      </tr>
     </template>
   </table>
 </template>

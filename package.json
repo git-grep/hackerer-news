@@ -10,8 +10,10 @@
   "dependencies": {
     "vue": "^2.5.21",
     "vue-class-component": "^6.0.0",
+    "vue-google-adsense": "^1.3.0",
     "vue-property-decorator": "^7.0.0",
     "vue-router": "^3.0.1",
+    "vue-script2": "^2.0.3",
     "vue-stash": "^2.0.1-beta"
   },
   "devDependencies": {
