@@ -5,13 +5,13 @@
         <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="left-time">{{ currentTime(index) }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
       </tr>
       <tr :key="dateStories.date+'h'">
-        <th colspan="3" class="column-heading">{{ index ? 'Niche' : 'Fresh' }}</th>
-        <th colspan="3" class="column-heading">Popular</th>
+        <th colspan="3" class="column-heading" :class="`group${index}`" @click="toggleLoSort(index)">{{ index || !loSort ? 'Niche' : 'Fresh' }}</th>
+        <th colspan="3" class="column-heading" :class="`group${index}`" @click="toggleHiSort(index)">{{ index || !hiSort ? 'Popular' : 'Pop Fresh' }}</th>
       </tr>
       <template v-for="(loHi, row) in zippedStories(dateStories.stories, index)">
         <tr v-if="row === 0 && index === 0" :key="`v${row}`">
-          <td><div class="sort-score" @click="toggleLoSort()">{{ loSortSymbol() }}</div></td><td colspan="2"></td>
-          <td><div class="sort-score" @click="toggleHiSort()">{{ hiSortSymbol() }}</div></td><td colspan="2"></td>
+          <td><div class="sort-score" @click="toggleLoSort(index)">{{ loSortSymbol() }}</div></td><td colspan="2"></td>
+          <td><div class="sort-score" @click="toggleHiSort(index)">{{ hiSortSymbol() }}</div></td><td colspan="2"></td>
         </tr>
         <tr :key="(loHi[0] || loHi[1]).id">
           <template v-for="i in [0, 1]">
@@ -41,7 +41,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class ListStories extends Vue {
   time = ''
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
-  loSort = false
+  loSort = true
   hiSort = false
 
   mounted() {
@@ -55,10 +55,16 @@ export default class ListStories extends Vue {
   hiSortSymbol() {
     return this.hiSort ? '⏱' : '▽ '
   }
-  toggleLoSort() {
+  toggleLoSort(index) {
+    if (index) {
+      return
+    }
     this.loSort = !this.loSort
   }
-  toggleHiSort() {
+  toggleHiSort(index) {
+    if (index) {
+      return
+    }
     this.hiSort = !this.hiSort
   }
   titleText(story) {
@@ -298,6 +304,9 @@ export default class ListStories extends Vue {
 .column-heading {
   padding-top: 5px;
   padding-bottom: 5px;
+}
+.column-heading.group0 {
+  cursor: pointer;
 }
 h1 {
   margin: 0;
