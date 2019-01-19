@@ -2,7 +2,7 @@
   <table align="center" style="margin-top: -23px">
     <template v-for="(dateStories, index) in storiesByDate(this.$store.topStories)">
       <tr :key="dateStories.date+'d'">
-        <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="left-time">{{ currentTime(index) }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
+        <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
       </tr>
       <tr :key="dateStories.date+'h'">
         <th colspan="3" class="column-heading" :class="`group${index}`" @click="toggleLoSort(index)">{{ index || !loSort ? 'Niche' : 'Fresh' }}</th>
@@ -21,20 +21,18 @@
               <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
             </template>
             <template v-else>
-              <td :key="`_${i}`" colspan="3"></td>
+              <td :key="`ab${i}`" colspan="2"></td>
+              <td :key="`as${i}`" class="full-width">
+                <InFeedAdsense
+                  data-ad-layout-key="-fg+5n+6t-e7+r"
+                  data-ad-client="ca-pub-7698401419914104"
+                  data-ad-slot="1234567890">
+                </InFeedAdsense>
+              </td>
             </template>
           </template>
         </tr>
       </template>
-      <tr :key="`as${index}`">
-        <td>
-          <InFeedAdsense
-            data-ad-layout-key="-fg+5n+6t-e7+r"
-            data-ad-client="ca-pub-7698401419914104"
-            data-ad-slot="1234567890">
-        </InFeedAdsense>
-        </td>
-      </tr>
     </template>
   </table>
 </template>
@@ -300,14 +298,11 @@ export default class ListStories extends Vue {
   font-weight: 300;
   color: #606060;
 }
-.left-time {
-  float: left;
-  margin-top: -4px;
-  visibility: hidden;
-}
 .right-time {
-  float: right;
   margin-top: -4px;
+  position: relative;
+  width: 100%;
+  text-align: right;
   color: #808080;
 }
 .column-heading {
@@ -316,6 +311,9 @@ export default class ListStories extends Vue {
 }
 .column-heading.group0 {
   cursor: pointer;
+}
+.full-width {
+  width: 100%;
 }
 h1 {
   margin: 0;
