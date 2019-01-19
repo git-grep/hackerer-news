@@ -8,18 +8,24 @@
         <th colspan="3" class="column-heading">{{ index ? 'Niche' : 'Fresh' }}</th>
         <th colspan="3" class="column-heading">Popular</th>
       </tr>
-      <tr v-for="loHi in zippedStories(dateStories.stories, index)" :key="(loHi[0] || loHi[1]).id">
-        <template v-for="i in [0, 1]">
-          <template v-if="loHi[i]">
-            <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
-            <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" target="hn" class="comments">{{ loHi[i].descendants || '⁺' }}</a></td>
-            <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
+      <template v-for="(loHi, row) in zippedStories(dateStories.stories, index)">
+        <tr v-if="row === 0 && index === 0" :key="`v${row}`">
+          <td><div class="sort-score" @click="toggleLoSort()">{{ loSortSymbol() }}</div></td><td colspan="2"></td>
+          <td><div class="sort-score" @click="toggleHiSort()">{{ hiSortSymbol() }}</div></td><td colspan="2"></td>
+        </tr>
+        <tr :key="(loHi[0] || loHi[1]).id">
+          <template v-for="i in [0, 1]">
+            <template v-if="loHi[i]">
+              <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
+              <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" target="hn" class="comments"><span>{{ loHi[i].descendants || '·' }}</span></a></td>
+              <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
+            </template>
+            <template v-else>
+              <td :key="`_${i}`" colspan="3"></td>
+            </template>
           </template>
-          <template v-else>
-            <td :key="`_${i}`" colspan="3"></td>
-          </template>
-        </template>
-      </tr>
+        </tr>
+      </template>
     </template>
   </table>
 </template>
@@ -35,12 +41,26 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class ListStories extends Vue {
   time = ''
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
+  loSort = false
+  hiSort = false
 
   mounted() {
     this.tick()
     this.loadStories()
   }
 
+  loSortSymbol() {
+    return this.loSort ? '⏱' : '△ '
+  }
+  hiSortSymbol() {
+    return this.hiSort ? '⏱' : '▽ '
+  }
+  toggleLoSort() {
+    this.loSort = !this.loSort
+  }
+  toggleHiSort() {
+    this.hiSort = !this.hiSort
+  }
   titleText(story) {
     return story.type === 'story' ? story.title : `${story.type}: ${story.title}`
   }
@@ -67,8 +87,14 @@ export default class ListStories extends Vue {
     const lo = scored.slice(0, m)
     const hi = scored.slice(m)
     if (index === 0) {
-      lo.sort((a, b) => b.time - a.time)
-      hi.sort((a, b) => b.time - a.time)
+      if (this.loSort) {
+        lo.sort((a, b) => b.time - a.time)
+      }
+      if (this.hiSort) {
+        hi.sort((a, b) => b.time - a.time)
+      } else {
+        hi.reverse()
+      }
 
       const newestStoryISODate = this.localeISODateString(lo[0].time)
       if (newestStoryISODate !== this.newestStoryISODate) {
@@ -229,11 +255,19 @@ export default class ListStories extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.sort-score {
+  margin-top: -6px;
+  line-height: 0 !important;;
+  width: 100%;
+  text-align: right;
+  font-size: 9px;
+  cursor: pointer;
+}
 .score {
   font-size: 11px;
 }
 .comments {
-  color: #606060;
+  color: #505050;
   font-size: 10px;
   font-weight: 300;
 }
