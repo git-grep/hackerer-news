@@ -233,8 +233,9 @@ export default class ListStories extends Vue {
   font-size: 11px;
 }
 .comments {
-  color: #aaaaaa;
+  color: #606060;
   font-size: 10px;
+  font-weight: 300;
 }
 .title-domain {
   width: 44vw;
@@ -242,12 +243,13 @@ export default class ListStories extends Vue {
   text-overflow: ellipsis;
 }
 .title {
-  font-size: 10pt;
+  font-size: 14px;
 }
 .item-domain {
   margin-left: 5px;
   font-size: 11px;
-  color: #aaaaaa;
+  font-weight: 300;
+  color: #606060;
 }
 .left-time {
   float: left;
@@ -276,7 +278,7 @@ td {
   font-family: sans-serif;
 }
 a:visited {
-  color: #aaaaaa;
+  color: #888888;
 }
 a {
   text-decoration: none;
