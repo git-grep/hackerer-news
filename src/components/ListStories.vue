@@ -13,7 +13,7 @@
           <td><div class="sort-score" @click="toggleLoSort(index)">{{ loSortSymbol() }}</div></td><td colspan="2"></td>
           <td><div class="sort-score" @click="toggleHiSort(index)">{{ hiSortSymbol() }}</div></td><td colspan="2"></td>
         </tr>
-        <tr :key="(loHi[0] || loHi[1]).id">
+        <tr :key="(loHi[0] || loHi[1] || {id: row}).id">
           <template v-for="i in [0, 1]">
             <template v-if="loHi[i]">
               <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
@@ -26,7 +26,7 @@
                 <InFeedAdsense
                   data-ad-layout-key="-fg+5n+6t-e7+r"
                   data-ad-client="ca-pub-7698401419914104"
-                  data-ad-slot="1234567890">
+                  :data-ad-slot="`1234567${index}${row}${i}`">
                 </InFeedAdsense>
               </td>
             </template>
@@ -124,6 +124,9 @@ export default class ListStories extends Vue {
       const l = (i < lo.length) && lo[i]
       const h = (i < hi.length) && hi[i]
       zipped.push([l, h])
+    }
+    if (lo.length === hi.length) {
+      zipped.push([undefined, undefined])
     }
     return zipped
   }
