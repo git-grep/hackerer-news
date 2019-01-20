@@ -32,25 +32,23 @@
               </td>
             </template>
             <template v-else>
-              <td colspan="3" style="max-height: 70px">
+              <!-- <td colspan="3" style="max-height: 70px">
                 <ins class="adsbygoogle" style="display:block"
                   data-ad-client="ca-pub-7698401419914104"
-                  data-ad-slot="2441064384"
+                  :data-ad-slot="adSenseTextOnlySlot(day, col)"
                   data-ad-format="auto"
                   data-full-width-responsive="true"></ins>
-              </td>
+              </td> -->
             </template>
           </tr>
-          <tr>
-            <td colspan="3" style="max-height: 120px">
-              <ins class="adsbygoogle" style="display:block"
-                data-ad-client="ca-pub-7698401419914104"
-                data-ad-slot="4384577737"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-            </td>
-          </tr>
         </table>
+      </div>
+      <div>
+        <ins class="adsbygoogle" style="display:block"
+          data-ad-client="ca-pub-7698401419914104"
+          :data-ad-slot="adSenseTextDisplaySlot(day)"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
       </div>
     </div>
     <!-- <div class="full-width">
@@ -87,6 +85,9 @@ export default class ListStories extends Vue {
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
+  adSenseTextDisplaySlots = ['4384577737', '4728192669', '9214232583', '9769546608']
+  adSenseTextOnlySlots = ['2441064384']
+  adSenseDisplayOnlySlots = []
 
   mounted() {
     this.tick()
@@ -323,6 +324,10 @@ export default class ListStories extends Vue {
 
   matchMediaWidth(minWidth768) {
     this.wideLayout = minWidth768.matches
+  }
+
+  adSenseTextDisplaySlot(day) {
+    return this.adSenseTextDisplaySlots[day]
   }
 
   renderedLoadAds() {
