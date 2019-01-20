@@ -7,10 +7,10 @@
       </div>
       <div class="story-columns">
         <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
-          <tr>
+          <tr v-if="stories.length">
             <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
           </tr>
-          <tr v-if="day === 0">
+          <tr v-if="day === 0 && stories.length">
             <td style="min-width: 15px;"><div class="sort-score" @click="toggleSort(day, col)">{{ sortSymbol(col) }}</div></td>
             <td colspan="2" style="min-width: 40vw;"></td>
           </tr>
