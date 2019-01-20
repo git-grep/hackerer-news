@@ -1,40 +1,48 @@
 <template>
-  <table align="center" style="margin-top: -23px">
-    <template v-for="(dateStories, index) in storiesByDate(this.$store.topStories)">
-      <tr :key="dateStories.date+'d'">
-        <th colspan="6"><div :style="dateStyle(index)">{{ dateStories.dateString }}</div><div class="right-time">{{ currentTime(index) }}</div></th>
-      </tr>
-      <tr :key="dateStories.date+'h'">
-        <th colspan="3" class="column-heading" :class="`group${index}`" @click="toggleLoSort(index)">{{ index || !loSort ? 'Niche' : 'Fresh' }}</th>
-        <th colspan="3" class="column-heading" :class="`group${index}`" @click="toggleHiSort(index)">{{ index || !hiSort ? 'Popular' : 'Pop Fresh' }}</th>
-      </tr>
-      <template v-for="(loHi, row) in zippedStories(dateStories.stories, index)">
-        <tr v-if="row === 0 && index === 0" :key="`v${row}`">
-          <td><div class="sort-score" @click="toggleLoSort(index)">{{ loSortSymbol() }}</div></td><td colspan="2"></td>
-          <td><div class="sort-score" @click="toggleHiSort(index)">{{ hiSortSymbol() }}</div></td><td colspan="2"></td>
-        </tr>
-        <tr :key="(loHi[0] || loHi[1] || {id: row}).id">
-          <template v-for="i in [0, 1]">
-            <template v-if="loHi[i]">
-              <td :key="`a${loHi[i].id}`" align="right"><a :href="itemLink(loHi[i])" target="hn" class="score">{{ loHi[i].score }}</a></td>
-              <td :key="`b${loHi[i].id}`" align="center"><a :href="itemLink(loHi[i])" target="hn" class="comments"><span>{{ loHi[i].descendants || '·' }}</span></a></td>
-              <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
+  <div align="center" style="margin-top: -23px">
+    <div v-for="(dateStories, day) in storiesByDate(this.$store.topStories)" :key="'d'+dateStories.date">
+      <div class="columns">
+        <div :style="dateStyle(day)">{{ dateStories.dateString }}</div>
+        <div class="right-time">{{ currentTime(day) }}</div>
+      </div>
+      <div class="columns" style="margin: 0 5px">
+        <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
+          <tr>
+            <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
+          </tr>
+          <tr v-if="day === 0">
+            <td style="min-width: 15px;"><div class="sort-score" @click="toggleSort(day, col)">{{ sortSymbol(col) }}</div></td>
+            <td colspan="2"></td>
+          </tr>
+          <tr v-for="(story, row) in stories" :key="(story || {id: row}).id">
+            <template v-if="story">
+              <td align="right">
+                <a :href="itemLink(story)" target="hn" class="score">{{ story.score }}</a>
+              </td>
+              <td align="center">
+                <a :href="itemLink(story)" target="hn" class="comments"><span>{{ story.descendants || '·' }}</span></a>
+              </td>
+              <td>
+                <a :href="titleLink(story)" :title="linkTitle(story)" target="hn" class="title-link">
+                  <div class="title-domain"><span class="title">{{ story.deleted && '(deleted)' || titleText(story) }}</span><span class="item-domain">{{ itemDomain(story) }}</span></div>
+                </a>
+              </td>
             </template>
             <template v-else>
-              <td :key="`ab${i}`" colspan="3"></td>
+              <td colspan="3"></td>
               <!-- <td :key="`as${i}`" class="full-width">
                 <InFeedAdsense
                   data-ad-layout-key="-fg+5n+6t-e7+r"
                   data-ad-client="ca-pub-7698401419914104"
-                  :data-ad-slot="`1${index}${row}${i}`">
+                  :data-ad-slot="`1${day}${row}${i}`">
                 </InFeedAdsense>
               </td> -->
             </template>
-          </template>
-        </tr>
-      </template>
-    </template>
-  </table>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -57,25 +65,32 @@ export default class ListStories extends Vue {
     this.loadStories()
   }
 
-  loSortSymbol() {
-    return this.loSort ? '⏱' : '△ '
+  sortTitle(day, col) {
+    if (col === 0) {
+      return day === 0 && this.loSort ? 'Fresh' : 'Niche'
+    } else {
+      return day === 0 && this.hiSort ? 'Pop Fresh' : 'Popular'
+    }
   }
-  hiSortSymbol() {
-    return this.hiSort ? '⏱' : '▽ '
+  sortSymbol(col) {
+    if (col === 0) {
+      return this.loSort ? '⏱' : '△'
+    } else {
+      return this.hiSort ? '⏱ ' : '▽  '
+    }
   }
-  toggleLoSort(index) {
-    if (index) {
+  toggleSort(day, col) {
+    if (day) {
       return
     }
-    this.loSort = !this.loSort
-    setCookie('news.hackerer.loSort', this.loSort)
-  }
-  toggleHiSort(index) {
-    if (index) {
-      return
+    console.log(`toggleSort(${col})`)
+    if (col === 0) {
+      this.loSort = !this.loSort
+      setCookie('news.hackerer.loSort', this.loSort)
+    } else {
+      this.hiSort = !this.hiSort
+      setCookie('news.hackerer.hiSort', this.hiSort)
     }
-    this.hiSort = !this.hiSort
-    setCookie('news.hackerer.hiSort', this.hiSort)
   }
   titleText(story) {
     return story.type === 'story' ? story.title : `${story.type}: ${story.title}`
@@ -94,7 +109,7 @@ export default class ListStories extends Vue {
     return story.url || `https://news.ycombinator.com/item?id=${story.id}`
   }
 
-  zippedStories(stories, index) {
+  colStories(stories, day) {
     if (!stories) {
       return []
     }
@@ -102,7 +117,7 @@ export default class ListStories extends Vue {
     const m = Math.ceil(scored.length / 2)
     const lo = scored.slice(0, m)
     const hi = scored.slice(m)
-    if (index === 0) {
+    if (day === 0) {
       if (this.loSort) {
         lo.sort((a, b) => b.time - a.time)
       }
@@ -121,17 +136,10 @@ export default class ListStories extends Vue {
       hi.reverse()
     }
 
-    const n = Math.max(lo.length, hi.length)
-    const zipped: any[] = []
-    for (let i = 0; i < n; i++) {
-      const l = (i < lo.length) && lo[i]
-      const h = (i < hi.length) && hi[i]
-      zipped.push([l, h])
-    }
     // if (lo.length === hi.length) {
     //   zipped.push([undefined, undefined])
     // }
-    return zipped
+    return [lo, hi]
   }
 
   storiesByDate(stories) {
@@ -236,8 +244,8 @@ export default class ListStories extends Vue {
     xhr.send()
   }
 
-  dateStyle(index) {
-    if (index) {
+  dateStyle(day) {
+    if (day) {
       return {position: 'absolute', 'margin-top': '8px', 'margin-left': '37.5%', width: '25%'}
     } else {
       return {position: 'absolute', 'margin-top': '-4px', 'margin-left': '37.5%', width: '25%'}
@@ -255,8 +263,8 @@ export default class ListStories extends Vue {
     setTimeout(this.tick, 1 + (60 - d.getSeconds()) * 1000)
   }
 
-  currentTime(index) {
-    return index ? '' : this.time
+  currentTime(day) {
+    return day === 0 ? this.time : ''
   }
   shortDate(d) {
     return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
@@ -306,6 +314,7 @@ export default class ListStories extends Vue {
 }
 .right-time {
   margin-top: -4px;
+  padding-right: 5px;
   position: relative;
   width: 100%;
   text-align: right;
@@ -317,6 +326,14 @@ export default class ListStories extends Vue {
 }
 .column-heading.group0 {
   cursor: pointer;
+}
+.columns {
+  display: flex;
+  flex-direction: row;
+}
+.rows {
+  display: flex;
+  flex-direction: column;
 }
 .full-width {
   width: 100%;
