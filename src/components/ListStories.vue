@@ -21,14 +21,14 @@
               <td :key="`c${loHi[i].id}`"><a :href="titleLink(loHi[i])" :title="linkTitle(loHi[i])" target="hn" class="title-link"><div class="title-domain"><span class="title">{{ loHi[i].deleted && '(deleted)' || titleText(loHi[i]) }}</span><span class="item-domain">{{ itemDomain(loHi[i]) }}</span></div></a></td>
             </template>
             <template v-else>
-              <td :key="`ab${i}`" colspan="2"></td>
-              <td :key="`as${i}`" class="full-width">
+              <td :key="`ab${i}`" colspan="3"></td>
+              <!-- <td :key="`as${i}`" class="full-width">
                 <InFeedAdsense
                   data-ad-layout-key="-fg+5n+6t-e7+r"
                   data-ad-client="ca-pub-7698401419914104"
                   :data-ad-slot="`1${index}${row}${i}`">
                 </InFeedAdsense>
-              </td>
+              </td> -->
             </template>
           </template>
         </tr>
@@ -125,9 +125,9 @@ export default class ListStories extends Vue {
       const h = (i < hi.length) && hi[i]
       zipped.push([l, h])
     }
-    if (lo.length === hi.length) {
-      zipped.push([undefined, undefined])
-    }
+    // if (lo.length === hi.length) {
+    //   zipped.push([undefined, undefined])
+    // }
     return zipped
   }
 
