@@ -54,6 +54,9 @@
         </table>
       </div>
     </div>
+    <div v-if="renderedLoadAds()">
+      <!-- ads loaded -->
+    </div>
   </div>
 </template>
 
@@ -69,6 +72,8 @@ import { getCookie, setCookie } from '../util/cookies.js'
 export default class ListStories extends Vue {
   wideLayout = window.innerWidth >= 768
   time = ''
+  loaded = false
+  rendered = false
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
@@ -223,6 +228,8 @@ export default class ListStories extends Vue {
         storyIds.sort((a, b) => b - a)
         this.$store.topStories.length = 0
 
+        this.loaded = false
+        this.rendered = false
         const result = {remaining: storyIds.length, stories: []}
         for (const id of storyIds) {
           this.loadStory(id, result)
@@ -252,6 +259,9 @@ export default class ListStories extends Vue {
           this.$store.topStories.push(story)
         }
         result.stories.length = 0
+        if (result.remaining === 0) {
+          this.loaded = true
+        }
       }
     })
   }
@@ -303,6 +313,25 @@ export default class ListStories extends Vue {
 
   matchMediaWidth(minWidth768) {
     this.wideLayout = minWidth768.matches
+  }
+
+  renderedLoadAds() {
+    if (!this.loaded) {
+      return
+    }
+    // window.infolinks_pid = 3158805
+    // window.infolinks_wsid = 0
+    // console.log('Loading ads')
+    // setTimeout(() => {
+    //   const script = document.createElement('script')
+    //   document.body.appendChild(script)
+    //   script.src = "https://resources.infolinks.com/js/infolinks_main.js"
+    //   console.log('Loaded script for ads')
+    // }, 100)
+    setTimeout(() => {
+      (window.adsbygoogle = window.adsbygoogle || []).push({})
+    }, 100)
+    this.loaded = false
   }
 }
 </script>
