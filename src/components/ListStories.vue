@@ -5,7 +5,7 @@
         <div :style="dateStyle(day)">{{ dateStories.dateString }}</div>
         <div class="right-time">{{ currentTime(day) }}</div>
       </div>
-      <div class="columns" style="margin: 0 5px">
+      <div class="story-columns" style="margin: 0 5px">
         <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
           <tr>
             <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
@@ -298,10 +298,19 @@ export default class ListStories extends Vue {
   font-size: 10px;
   font-weight: 300;
 }
-.title-domain {
-  width: 44vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
+@media (max-width: 767px) {
+  .title-domain {
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+@media (min-width: 768px) {
+  .title-domain {
+    max-width: 44vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 .title {
   font-size: 14px;
@@ -326,6 +335,18 @@ export default class ListStories extends Vue {
 }
 .column-heading.group0 {
   cursor: pointer;
+}
+@media (max-width: 767px) {
+  .story-columns {
+    display: flex;
+    flex-direction: column;
+  }
+}
+@media (min-width: 768px) {
+  .story-columns {
+    display: flex;
+    flex-direction: row;
+  }
 }
 .columns {
   display: flex;
