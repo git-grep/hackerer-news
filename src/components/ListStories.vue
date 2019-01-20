@@ -1,11 +1,11 @@
 <template>
   <div align="center" style="margin-top: -23px">
     <div v-for="(dateStories, day) in storiesByDate(this.$store.topStories)" :key="'d'+dateStories.date">
-      <div class="columns">
+      <div class="columns" :class="day === 0 ? 'first' : 'next'">
         <div :style="dateStyle(day)">{{ dateStories.dateString }}</div>
         <div class="right-time">{{ currentTime(day) }}</div>
       </div>
-      <div class="story-columns" style="margin: 0 5px">
+      <div class="story-columns">
         <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
           <tr>
             <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
@@ -346,6 +346,9 @@ export default class ListStories extends Vue {
 .column-heading.group0 {
   cursor: pointer;
 }
+.story-columns {
+  margin: 0 5px;
+}
 @media (max-width: 767px) {
   .story-columns {
     display: flex;
@@ -357,6 +360,9 @@ export default class ListStories extends Vue {
     display: flex;
     flex-direction: row;
   }
+}
+.columns.next {
+  margin-top: 4px;
 }
 .columns {
   display: flex;
