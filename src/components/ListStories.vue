@@ -2,12 +2,12 @@
   <div align="center" style="margin-top: -23px">
     <div v-for="(dateStories, day) in storiesByDate(this.$store.topStories)" :key="'d'+dateStories.date">
       <div class="columns" :class="day === 0 ? 'first' : 'next'" v-if="wideLayout || day === 0">
-        <div :style="dateStyle(day)">{{ dateStories.dateString }}</div>
+        <div v-if="wideLayout" :style="dateStyle(day)">{{ dateStories.dateString }}</div>
         <div class="right-time">{{ currentTime(day) }}</div>
       </div>
       <div class="story-columns">
         <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
-          <div class="columns next" v-if="stories.length && !wideLayout && (day !== 0 || col === 0)">
+          <div class="columns next" v-if="stories.length && !wideLayout">
             <div :style="dateStyle(1)">{{ dateStories.dateString }}</div>
           </div>
           <tr v-if="stories.length">
