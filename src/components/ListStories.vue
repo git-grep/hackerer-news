@@ -32,7 +32,14 @@
               </td>
             </template>
             <template v-else>
-              <td colspan="3"></td>
+              <td colspan="3">
+                <ins class="adsbygoogle"
+                  style="display:block"
+                  data-ad-client="ca-pub-7698401419914104"
+                  data-ad-slot="2441064384"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"></ins>
+              </td>
               <!-- <td :key="`as${i}`" class="full-width">
                 <InFeedAdsense
                   data-ad-layout-key="-fg+5n+6t-e7+r"
