@@ -32,25 +32,17 @@
               </td>
             </template>
             <template v-else>
-              <td colspan="3">
-                <ins class="adsbygoogle"
-                  style="display:block"
+              <td colspan="3" style="max-height: 70px">
+                <ins class="adsbygoogle" style="display:block"
                   data-ad-client="ca-pub-7698401419914104"
                   data-ad-slot="2441064384"
                   data-ad-format="auto"
                   data-full-width-responsive="true"></ins>
               </td>
-              <!-- <td :key="`as${i}`" class="full-width">
-                <InFeedAdsense
-                  data-ad-layout-key="-fg+5n+6t-e7+r"
-                  data-ad-client="ca-pub-7698401419914104"
-                  :data-ad-slot="`1${day}${row}${i}`">
-                </InFeedAdsense>
-              </td> -->
             </template>
           </tr>
           <tr>
-            <td colspan="3">
+            <td colspan="3" style="max-height: 120px">
               <ins class="adsbygoogle" style="display:block"
                 data-ad-client="ca-pub-7698401419914104"
                 data-ad-slot="4384577737"
@@ -61,6 +53,13 @@
         </table>
       </div>
     </div>
+    <!-- <div class="full-width">
+      <InFeedAdsense
+        data-ad-layout-key="-fg+5n+6t-e7+r"
+        data-ad-client="ca-pub-7698401419914104"
+        data-ad-slot="4384577737">
+      </InFeedAdsense>
+    </div> -->
     <div v-if="renderedLoadAds()">
       <!-- ads loaded -->
     </div>
