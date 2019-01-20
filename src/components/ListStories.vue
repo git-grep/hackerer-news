@@ -55,6 +55,7 @@ import { getCookie, setCookie } from '../util/cookies.js'
   },
 })
 export default class ListStories extends Vue {
+  wideLayout = window.innerWidth >= 768
   time = ''
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
   loSort = getCookie('news.hackerer.loSort', true)
@@ -63,7 +64,11 @@ export default class ListStories extends Vue {
   mounted() {
     this.tick()
     this.loadStories()
+
+    const minWidth768 = window.matchMedia('(min-width: 768px)')
+    minWidth768.addListener(this.matchMediaWidth)
   }
+
 
   sortTitle(day, col) {
     if (col === 0) {
@@ -244,10 +249,12 @@ export default class ListStories extends Vue {
   }
 
   dateStyle(day) {
-    if (day) {
+    if (day === 0) {
+      return {position: 'absolute', 'margin-top': '-4px', 'margin-left': '37.5%', width: '25%'}
+    } else if (this.wideLayout) {
       return {position: 'absolute', 'margin-top': '8px', 'margin-left': '37.5%', width: '25%'}
     } else {
-      return {position: 'absolute', 'margin-top': '-4px', 'margin-left': '37.5%', width: '25%'}
+      return {position: 'absolute', 'margin-top': '8px', 'margin-left': '12.5%', width: '25%'}
     }
   }
 
@@ -275,6 +282,10 @@ export default class ListStories extends Vue {
     const dd = d.getDate() < 10 ? `0${d.getDate()}` : `${d.getDate()}`
     const s = `${d.getFullYear()}-${mm}-${dd}`
     return s
+  }
+
+  matchMediaWidth(minWidth768) {
+    this.wideLayout = minWidth768.matches
   }
 }
 </script>
