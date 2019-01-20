@@ -64,6 +64,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { getCookie, setCookie } from '../util/cookies.js'
 
+declare global {
+  interface Window { adsbygoogle: any[] }
+}
+
 @Component({
   props: {
     storyType: String,
