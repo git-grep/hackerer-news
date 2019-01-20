@@ -39,6 +39,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { getCookie, setCookie } from '../util/cookies.js'
 
 @Component({
   props: {
@@ -48,8 +49,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class ListStories extends Vue {
   time = ''
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
-  loSort = true
-  hiSort = false
+  loSort = getCookie('news.hackerer.loSort', true)
+  hiSort = getCookie('news.hackerer.hiSort', false)
 
   mounted() {
     this.tick()
@@ -67,12 +68,14 @@ export default class ListStories extends Vue {
       return
     }
     this.loSort = !this.loSort
+    setCookie('news.hackerer.loSort', this.loSort)
   }
   toggleHiSort(index) {
     if (index) {
       return
     }
     this.hiSort = !this.hiSort
+    setCookie('news.hackerer.hiSort', this.hiSort)
   }
   titleText(story) {
     return story.type === 'story' ? story.title : `${story.type}: ${story.title}`
