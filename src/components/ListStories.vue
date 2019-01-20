@@ -42,6 +42,15 @@
               </td> -->
             </template>
           </tr>
+          <tr>
+            <td colspan="3">
+              <ins class="adsbygoogle" style="display:block"
+                data-ad-client="ca-pub-7698401419914104"
+                data-ad-slot="4384577737"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            </td>
+          </tr>
         </table>
       </div>
     </div>
