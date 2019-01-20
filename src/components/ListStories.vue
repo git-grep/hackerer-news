@@ -7,9 +7,8 @@
       </div>
       <div class="story-columns">
         <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
-          <div class="columns next" v-if="stories.length && !wideLayout && (day !== 0 || col !== 0)">
-            <div :style="dateStyle(day)">{{ dateStories.dateString }}</div>
-            <div class="right-time">{{ currentTime(day) }}</div>
+          <div class="columns next" v-if="stories.length && !wideLayout && (day !== 0 || col === 0)">
+            <div :style="dateStyle(1)">{{ dateStories.dateString }}</div>
           </div>
           <tr v-if="stories.length">
             <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
@@ -128,6 +127,8 @@ export default class ListStories extends Vue {
     if (day === 0) {
       if (this.loSort) {
         lo.sort((a, b) => b.time - a.time)
+      } else if (!this.wideLayout) {
+        lo.reverse()
       }
       if (this.hiSort) {
         hi.sort((a, b) => b.time - a.time)
@@ -141,6 +142,9 @@ export default class ListStories extends Vue {
         this.tick()
       }
     } else {
+      if (!this.wideLayout) {
+        lo.reverse()
+      }
       hi.reverse()
     }
 
@@ -356,7 +360,7 @@ export default class ListStories extends Vue {
 @media (max-width: 767px) {
   .story-columns {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 }
 @media (min-width: 768px) {
