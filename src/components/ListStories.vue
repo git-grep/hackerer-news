@@ -12,7 +12,7 @@
           </tr>
           <tr v-if="day === 0">
             <td style="min-width: 15px;"><div class="sort-score" @click="toggleSort(day, col)">{{ sortSymbol(col) }}</div></td>
-            <td colspan="2"></td>
+            <td colspan="2" style="min-width: 40vw;"></td>
           </tr>
           <tr v-for="(story, row) in stories" :key="(story || {id: row}).id">
             <template v-if="story">
