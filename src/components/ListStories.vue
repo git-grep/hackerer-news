@@ -83,7 +83,6 @@ export default class ListStories extends Vue {
     if (day) {
       return
     }
-    console.log(`toggleSort(${col})`)
     if (col === 0) {
       this.loSort = !this.loSort
       setCookie('news.hackerer.loSort', this.loSort)
