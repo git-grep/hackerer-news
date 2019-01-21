@@ -43,10 +43,10 @@
           </tr>
         </table>
       </div>
-      <div>
+      <div v-for="slot in adSenseTextDisplaySlot(day)" :key="slot">
         <ins class="adsbygoogle" style="display:block"
           data-ad-client="ca-pub-7698401419914104"
-          :data-ad-slot="adSenseTextDisplaySlot(day)"
+          :data-ad-slot="slot"
           data-ad-format="auto"
           data-full-width-responsive="true"></ins>
       </div>
@@ -327,7 +327,8 @@ export default class ListStories extends Vue {
   }
 
   adSenseTextDisplaySlot(day) {
-    return this.adSenseTextDisplaySlots[day]
+    return []
+    // return this.adSenseTextDisplaySlots[day]
   }
 
   renderedLoadAds() {
