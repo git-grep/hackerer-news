@@ -1,5 +1,5 @@
 <template>
-  <h1><img src="/favicon.png" class="H"/>ackerer.<a href="https://news.ycombinator.com/newest" target="hn">new</a>s</h1>
+  <h1><img src="/favicon.png" class="H"/>ackerer.news</h1>
 </template>
 
 <script lang="ts">

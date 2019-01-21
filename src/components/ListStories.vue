@@ -1,6 +1,6 @@
 <template>
   <div align="center" style="margin-top: -23px">
-    <div v-for="(dateStories, day) in storiesByDate(this.$store.topStories)" :key="'d'+dateStories.date">
+    <div v-for="(dateStories, day) in storiesByDate()" :key="'d'+dateStories.date">
       <div class="columns" :class="day === 0 ? 'first' : 'next'" v-if="wideLayout || day === 0">
         <div v-if="wideLayout" :style="dateStyle(day)">{{ dateStories.dateString }}</div>
         <div class="right-time">{{ currentTime(day) }}</div>
@@ -11,10 +11,17 @@
             <div :style="dateStyle(1)">{{ dateStories.dateString }}</div>
           </div>
           <tr v-if="stories.length">
-            <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleSort(day, col)">{{ sortTitle(day, col) }}</th>
+            <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleStorySource()"
+              title="Change listing of Top, New, or Ask/Show stories.">
+              {{ sortTitle(day, col) }}
+            </th>
           </tr>
           <tr v-if="day === 0 && stories.length">
-            <td style="min-width: 15px;"><div class="sort-score" @click="toggleSort(day, col)">{{ sortSymbol(col) }}</div></td>
+            <td style="min-width: 15px;">
+              <div class="sort-score" @click="toggleSort(day, col)">
+                {{ sortSymbol(col) }}
+              </div>
+            </td>
             <td colspan="2" style="min-width: 40vw;"></td>
           </tr>
           <tr v-for="(story, row) in stories" :key="(story || {id: row}).id">
@@ -83,6 +90,7 @@ export default class ListStories extends Vue {
   loaded = false
   rendered = false
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
+  storySource = getCookie('news.hackerer.storySource', 'topstories')
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
   adSenseTextDisplaySlots = ['4384577737', '4728192669', '9214232583', '9769546608']
@@ -97,19 +105,47 @@ export default class ListStories extends Vue {
     minWidth768.addListener(this.matchMediaWidth)
   }
 
-
   sortTitle(day, col) {
-    if (col === 0) {
-      return day === 0 && this.loSort ? 'Fresh' : 'Niche'
+    if (this.storySource === 'askshow') {
+      return col === 0 ? 'Ask HN' : 'Show HN'
+    } else if (this.storySource === 'newstories') {
+      if (day === 0) {
+        if (col === 0) {
+          return 'Newest'
+        } else {
+          return this.hiSort ? 'Recent' : 'New Popular'
+        }
+      } else {
+        return col === 0 ? 'Newish' : 'Warm'
+      }
     } else {
-      return day === 0 && this.hiSort ? 'Pop Fresh' : 'Popular'
+      if (col === 0) {
+        return day === 0 && this.loSort ? 'Top Fresh' : 'Top Niche'
+      } else {
+        return day === 0 && this.hiSort ? 'Top Popular' : 'Top Popular'
+      }
     }
   }
   sortSymbol(col) {
-    if (col === 0) {
-      return this.loSort ? '⏱' : '△'
+    if (col === 0 && this.storySource === 'newstories') {
+      return '⏱'
+    } else if (col === 0) {
+      return this.loSort ? '⏱' : (this.storySource !== 'askshow' && this.wideLayout ? '△' : '▽')
     } else {
       return this.hiSort ? '⏱ ' : '▽  '
+    }
+  }
+  toggleStorySource() {
+    if (this.storySource === 'topstories') {
+      this.storySource = 'newstories'
+    } else if (this.storySource === 'newstories') {
+      this.storySource = 'askshow'
+    } else {
+      this.storySource = 'topstories'
+    }
+    setCookie('news.hackerer.storySource', this.storySource)
+    if (this.countStories() === 0) {
+      this.loadStories()
     }
   }
   toggleSort(day, col) {
@@ -146,13 +182,21 @@ export default class ListStories extends Vue {
       return []
     }
     const scored = stories.sort((a, b) => a.score === b.score ? b.time - a.time : a.score - b.score)
-    const m = Math.ceil(scored.length / 2)
-    const lo = scored.slice(0, m)
-    const hi = scored.slice(m)
+    let lo: any[]
+    let hi: any[]
+    if (this.storySource === 'askshow') {
+      lo = scored.filter(s => !s.title.startsWith('Show HN'))
+      hi = scored.filter(s => s.title.startsWith('Show HN'))
+    } else {
+      const m = Math.ceil(scored.length / 2)
+      lo = scored.slice(0, m)
+      hi = scored.slice(m)
+    }
+
     if (day === 0) {
-      if (this.loSort) {
+      if (this.loSort || this.storySource === 'newstories') {
         lo.sort((a, b) => b.time - a.time)
-      } else if (!this.wideLayout) {
+      } else if (this.storySource === 'askshow' || !this.wideLayout) {
         lo.reverse()
       }
       if (this.hiSort) {
@@ -167,7 +211,7 @@ export default class ListStories extends Vue {
         this.tick()
       }
     } else {
-      if (!this.wideLayout) {
+      if (this.storySource === 'askshow' || !this.wideLayout) {
         lo.reverse()
       }
       hi.reverse()
@@ -179,7 +223,25 @@ export default class ListStories extends Vue {
     return [lo, hi]
   }
 
-  storiesByDate(stories) {
+  countStories() {
+    if (this.storySource === 'askshow') {
+      return this.$store.askStories.length + this.$store.showStories.length
+    } else if (this.storySource === 'newstories') {
+      return this.$store.newStories.length
+    } else {
+      return this.$store.topStories.length
+    }
+  }
+
+  storiesByDate() {
+    let stories: any[] = []
+    if (this.storySource === 'askshow') {
+      stories = this.$store.askStories.concat(this.$store.showStories)
+    } else if (this.storySource === 'newstories') {
+      stories = this.$store.newStories
+    } else {
+      stories = this.$store.topStories
+    }
     if (!stories) {
       return []
     }
@@ -233,23 +295,34 @@ export default class ListStories extends Vue {
   }
 
   loadStories() {
-    this.getUrl('https://hacker-news.firebaseio.com/v0/topstories.json', (status, responseText) => {
-      if (status === 200 && responseText) {
-        const storyIds = JSON.parse(responseText)
-        storyIds.sort((a, b) => b - a)
-        this.$store.topStories.length = 0
+    const urlStories: any[] = []
+    if (this.storySource === 'askshow') {
+      urlStories.push([`https://hacker-news.firebaseio.com/v0/askstories.json`, this.$store.askStories])
+      urlStories.push([`https://hacker-news.firebaseio.com/v0/showstories.json`, this.$store.showStories])
+    } else if (this.storySource === 'newstories') {
+      urlStories.push([`https://hacker-news.firebaseio.com/v0/newstories.json`, this.$store.newStories])
+    } else {
+      urlStories.push([`https://hacker-news.firebaseio.com/v0/topstories.json`, this.$store.topStories])
+    }
+    for (const [url, store] of urlStories) {
+      this.getUrl(url, (status, responseText) => {
+        if (status === 200 && responseText) {
+          const storyIds = JSON.parse(responseText)
+          storyIds.sort((a, b) => b - a)
+          store.length = 0
 
-        this.loaded = false
-        this.rendered = false
-        const result = {remaining: storyIds.length, stories: []}
-        for (const id of storyIds) {
-          this.loadStory(id, result)
+          this.loaded = false
+          this.rendered = false
+          const result = {remaining: storyIds.length, stories: []}
+          for (const id of storyIds) {
+            this.loadStory(id, result, store)
+          }
         }
-      }
-    })
+      })
+    }
   }
 
-  loadStory(storyId, result) {
+  loadStory(storyId, result, store) {
     this.getUrl(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`, (status, responseText) => {
       if (status === 200 && responseText) {
         const story = JSON.parse(responseText)
@@ -259,7 +332,7 @@ export default class ListStories extends Vue {
       }
       result.remaining--
       let batchSize = 60
-      const total = this.$store.topStories.length + result.stories.length
+      const total = store.length + result.stories.length
       if (total < 140) {
         batchSize = 10
       } else if (total < 200) {
@@ -267,7 +340,7 @@ export default class ListStories extends Vue {
       }
       if (result.remaining % batchSize === 0) {
         for (const story of result.stories) {
-          this.$store.topStories.push(story)
+          store.push(story)
         }
         result.stories.length = 0
         if (result.remaining === 0) {
