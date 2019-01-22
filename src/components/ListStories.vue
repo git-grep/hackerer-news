@@ -136,7 +136,11 @@ export default class ListStories extends Vue {
     } else if (col === 0) {
       return this.loSort ? '⏱' : (this.storySource !== 'askshow' && this.wideLayout ? '△' : '▽')
     } else {
-      return this.hiSort ? '⏱ ' : '▽  '
+      if (this.storySource === 'topstories') {
+        return this.hiSort ? '⏱ ' : '▽  '
+      } else {
+        return this.hiSort ? '⏱' : '▽'
+      }
     }
   }
   toggleStorySource() {
