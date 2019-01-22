@@ -11,9 +11,10 @@
             <div :style="dateStyle(1)">{{ dateStories.dateString }}</div>
           </div>
           <tr v-if="stories.length">
-            <th colspan="3" class="column-heading" :class="`group${day}`" @click="toggleStorySource()"
-              title="Change listing of Top, New, or Ask/Show stories.">
-              {{ sortTitle(day, col) }}
+            <th colspan="3" class="column-heading">
+              <div @click="toggleStorySource()" :class="`group${day}`" title="Change listing of Top, New, or Ask/Show stories.">
+                {{ sortTitle(day, col) }}
+              </div>
             </th>
           </tr>
           <tr v-if="day === 0 && stories.length">
@@ -525,7 +526,7 @@ export default class ListStories extends Vue {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-.column-heading.group0 {
+.group0 {
   cursor: pointer;
 }
 .story-columns {
@@ -565,6 +566,9 @@ h1 {
 }
 h3 {
   margin: 40px 0 0;
+}
+th > div {
+  display: inline-block;
 }
 td {
   min-width: 1.5em;
