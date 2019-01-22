@@ -66,7 +66,7 @@
       </InFeedAdsense>
     </div> -->
     <div v-if="renderedLoadAds()">
-      <!-- ads loaded -->
+      <!-- ads loading -->
     </div>
   </div>
 </template>
@@ -98,11 +98,11 @@ export default class ListStories extends Vue {
   adSenseDisplayOnlySlots = []
 
   mounted() {
-    this.tick()
-    this.loadStories()
-
     const minWidth768 = window.matchMedia('(min-width: 768px)')
     minWidth768.addListener(this.matchMediaWidth)
+
+    this.tick()
+    this.loadStories().then(() => {})
   }
 
   sortTitle(day, col) {
@@ -113,16 +113,16 @@ export default class ListStories extends Vue {
         if (col === 0) {
           return 'Newest'
         } else {
-          return this.hiSort ? 'Recent' : 'New Popular'
+          return this.hiSort ? 'Recent' : 'Popular New'
         }
       } else {
         return col === 0 ? 'Newish' : 'Warm'
       }
     } else {
       if (col === 0) {
-        return day === 0 && this.loSort ? 'Top Fresh' : 'Top Niche'
+        return day === 0 && this.loSort ? 'Fresh' : 'Niche'
       } else {
-        return day === 0 && this.hiSort ? 'Top Popular' : 'Top Popular'
+        return 'Popular'
       }
     }
   }
@@ -294,7 +294,7 @@ export default class ListStories extends Vue {
     }
   }
 
-  loadStories() {
+  async loadStories() {
     const urlStories: any[] = []
     if (this.storySource === 'askshow') {
       urlStories.push([`https://hacker-news.firebaseio.com/v0/askstories.json`, this.$store.askStories])
@@ -406,7 +406,7 @@ export default class ListStories extends Vue {
 
   renderedLoadAds() {
     if (!this.loaded) {
-      return
+      return false
     }
     // window.infolinks_pid = 3158805
     // window.infolinks_wsid = 0
@@ -418,9 +418,13 @@ export default class ListStories extends Vue {
     //   console.log('Loaded script for ads')
     // }, 100)
     setTimeout(() => {
+      if (document.querySelectorAll("ins").length === document.querySelectorAll("ins > *").length) {
+        return
+      }
       (window.adsbygoogle = window.adsbygoogle || []).push({})
     }, 100)
     this.loaded = false
+    return true
   }
 }
 </script>
