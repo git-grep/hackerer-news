@@ -51,6 +51,11 @@
           </tr>
         </table>
       </div>
+      <div style="margin-top: 4px; font-size: 13px">
+        Brought to you by the maker
+        of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep">Gitgrep.com</a>&nbsp;<small>(launch)</small>
+        and <a href="https://quicklog.io" target="quicklog">Quicklog.io</a>
+      </div>
       <div v-for="slot in adSenseTextDisplaySlot(day)" :key="slot">
         <ins class="adsbygoogle" style="display:block"
           data-ad-client="ca-pub-7698401419914104"
