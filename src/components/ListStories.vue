@@ -79,6 +79,8 @@ declare global {
   interface Window { adsbygoogle: any[] }
 }
 
+const noop = () => undefined
+
 @Component({
   props: {
     storyType: String,
@@ -102,7 +104,7 @@ export default class ListStories extends Vue {
     minWidth768.addListener(this.matchMediaWidth)
 
     this.tick()
-    this.loadStories().then(() => {})
+    this.loadStories().then(noop)
   }
 
   sortTitle(day, col) {
@@ -418,7 +420,7 @@ export default class ListStories extends Vue {
     //   console.log('Loaded script for ads')
     // }, 100)
     setTimeout(() => {
-      if (document.querySelectorAll("ins").length === document.querySelectorAll("ins > *").length) {
+      if (document.querySelectorAll('ins').length === document.querySelectorAll('ins > *').length) {
         return
       }
       (window.adsbygoogle = window.adsbygoogle || []).push({})
