@@ -390,9 +390,9 @@ export default class ListStories extends Vue {
   dateStyle(day) {
     let style: object = {position: 'absolute', width: '25%'}
     if (day === 0) {
-      style = {...style, 'margin-top': '-4px', 'margin-left': '37.5%'}
+      style = {...style, 'margin-top': '-4px', 'margin-left': '39%'}
     } else if (this.wideLayout) {
-      style = {...style, 'margin-top': '8px', 'margin-left': '37.5%'}
+      style = {...style, 'margin-top': '6px', 'margin-left': '39%'}
     } else {
       style = {...style, 'margin-top': '8px', 'margin-left': '12.5%', 'font-size': '15px'}
     }
