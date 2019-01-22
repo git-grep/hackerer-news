@@ -80,8 +80,6 @@ declare global {
 }
 
 const noop = () => undefined
-let liveStorySource = getCookie('news.hackerer.storySource', 'topstories')
-const sourceXhrs: {[key: string]: object} = {}
 
 @Component({
   props: {
@@ -94,7 +92,7 @@ export default class ListStories extends Vue {
   loaded = false
   rendered = false
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
-  storySource = liveStorySource
+  storySource = getCookie('news.hackerer.storySource', 'topstories')
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
   adSenseTextDisplaySlots = ['4384577737', '4728192669', '9214232583', '9769546608']
@@ -153,7 +151,6 @@ export default class ListStories extends Vue {
       this.storySource = 'topstories'
     }
     setCookie('news.hackerer.storySource', this.storySource)
-    liveStorySource = this.storySource
     if (this.countStories() === 0) {
       this.loadStoryIds()
     }
@@ -338,24 +335,11 @@ export default class ListStories extends Vue {
       if (i % 10 === 0) {
         await this.sleep(200)
       }
-      if (this.storySource !== liveStorySource) {
-        this.loaded = true
-        break
-      }
       this.loadStory(id, result, store)
     }
   }
 
   loadStory(storyId, result, store) {
-    if (this.storySource !== liveStorySource) {
-      const xhrs = sourceXhrs[this.storySource] || {}
-      for (const [key, xhr] of Object.entries(xhrs)) {
-        xhr.cancel()
-        delete xhrs[key]
-      }
-      this.loaded = true
-      return
-    }
     this.getStoryUrl(storyId, `https://hacker-news.firebaseio.com/v0/item/${storyId}.json`,
     (status, responseText) => {
       if (status === 200 && responseText) {
@@ -385,17 +369,12 @@ export default class ListStories extends Vue {
   }
 
   getStoryUrl(storyId, url, onLoad) {
-    const xhrs = sourceXhrs[this.storySource] || {}
-    if (Object.entries(xhrs).length === 0) {
-      sourceXhrs[this.storySource] = xhrs
-    }
     const xhr = new XMLHttpRequest()
     xhr.open('GET', url)
     xhr.onload = () => {
       onLoad(xhr.status, xhr.responseText)
     }
     xhr.send()
-    xhrs[storyId] = xhr
   }
 
   getUrl(url, onLoad) {
