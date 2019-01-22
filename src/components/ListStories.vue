@@ -17,7 +17,7 @@
             </th>
           </tr>
           <tr v-if="day === 0 && stories.length">
-            <td style="min-width: 1.5em;">
+            <td>
               <div class="sort-score" @click="toggleSort(day, col)">
                 {{ sortSymbol(col) }}
               </div>
@@ -565,6 +565,9 @@ h1 {
 }
 h3 {
   margin: 40px 0 0;
+}
+td:first-child {
+  min-width: 1.5em;
 }
 td {
   white-space: nowrap;
