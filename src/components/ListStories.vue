@@ -566,10 +566,8 @@ h1 {
 h3 {
   margin: 40px 0 0;
 }
-td:first-child {
-  min-width: 1.5em;
-}
 td {
+  min-width: 1.5em;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 13px;
