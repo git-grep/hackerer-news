@@ -17,7 +17,7 @@
             </th>
           </tr>
           <tr v-if="day === 0 && stories.length">
-            <td style="min-width: 15px;">
+            <td style="min-width: 1.5em;">
               <div class="sort-score" @click="toggleSort(day, col)">
                 {{ sortSymbol(col) }}
               </div>
@@ -500,14 +500,14 @@ export default class ListStories extends Vue {
 }
 @media (max-width: 767px) {
   .title-domain {
-    max-width: 90vw;
+    width: 89vw;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 }
 @media (min-width: 768px) {
   .title-domain {
-    max-width: 44vw;
+    width: 44vw;
     overflow: hidden;
     text-overflow: ellipsis;
   }
