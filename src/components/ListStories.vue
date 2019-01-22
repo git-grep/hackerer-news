@@ -176,7 +176,7 @@ export default class ListStories extends Vue {
       .replace(/#[^#]*$/, '').replace(/\.html?/, '').replace(/\/$/, '')
   }
   itemDomain(story) {
-    return (story.url || '').replace(/^https?:\/\/(?:www\.)?([^/]*).*/, '$1').replace('.com', '')
+    return (story.url || '').replace(/^https?:\/\/(?:www\.)?([^/]*).*/, '$1')
   }
   itemLink(story) {
     return `https://news.ycombinator.com/item?id=${story.id}`
