@@ -188,10 +188,11 @@ export default class ListStories extends Vue {
   }
 
   colStories(stories, day) {
-    if (!stories) {
+    if (stories.length === 0) {
       return []
     }
-    const newestStoryISODate = stories.reduce((a, b) => Math.max(a.time, b.time))
+    const newestUnixTime = Math.max.apply(null, stories.map(s => s.time))
+    const newestStoryISODate = this.localeISODateString(newestUnixTime)
     const scored = stories.sort((a, b) => a.score === b.score ? b.time - a.time : a.score - b.score)
     let lo: any[]
     let hi: any[]
@@ -407,13 +408,15 @@ export default class ListStories extends Vue {
   }
 
   dateStyle(day) {
+    let style: object = {position: 'absolute', width: '25%'}
     if (day === 0) {
-      return {position: 'absolute', 'margin-top': '-4px', 'margin-left': '37.5%', width: '25%'}
+      style = {...style, 'margin-top': '-4px', 'margin-left': '37.5%'}
     } else if (this.wideLayout) {
-      return {position: 'absolute', 'margin-top': '8px', 'margin-left': '37.5%', width: '25%'}
+      style = {...style, 'margin-top': '8px', 'margin-left': '37.5%'}
     } else {
-      return {position: 'absolute', 'margin-top': '8px', 'margin-left': '12.5%', width: '25%'}
+      style = {...style, 'margin-top': '8px', 'margin-left': '12.5%', 'font-size': '15px'}
     }
+    return style
   }
 
   tick() {
@@ -522,12 +525,22 @@ export default class ListStories extends Vue {
   color: #606060;
 }
 .right-time {
-  margin-top: -4px;
   padding-right: 5px;
   position: relative;
   width: 100%;
   text-align: right;
   color: #808080;
+}
+@media(max-width: 767px) {
+  .right-time {
+    margin-top: 1px;
+    font-size: 15px
+  }
+}
+@media(min-width: 768px) {
+  .right-time {
+    margin-top: -4px;
+  }
 }
 .column-heading {
   padding-top: 5px;
@@ -550,6 +563,9 @@ export default class ListStories extends Vue {
     display: flex;
     flex-direction: row;
   }
+}
+.columns.first {
+  margin-top: 7px;
 }
 .columns.next {
   margin-top: 4px;

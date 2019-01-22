@@ -16,16 +16,28 @@ export default class HelloWorld extends Vue {
 .H {
   margin-left: 2px;
   margin-right: 1.25px;
-  width: 26px;
-  height: 27px;
 }
 h1 {
   margin: 3px 5px;
-  font-size: 18pt;
   color: #777;
 }
-h3 {
-  margin: 40px 0 0;
+@media(max-width: 767px) {
+  h1 {
+    font-size: 22px;
+  }
+  .H {
+    width: 23px;
+    height: 24px;
+  }
+}
+@media(min-width: 768px) {
+  h1 {
+    font-size: 24px;
+  }
+  .H {
+    width: 26px;
+    height: 27px;
+  }
 }
 ul {
   list-style-type: none;
