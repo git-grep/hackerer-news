@@ -80,6 +80,8 @@ declare global {
 }
 
 const noop = () => undefined
+let liveStorySource = getCookie('news.hackerer.storySource', 'topstories')
+const sourceXhrs: {[key: string]: object} = {}
 
 @Component({
   props: {
@@ -92,7 +94,7 @@ export default class ListStories extends Vue {
   loaded = false
   rendered = false
   newestStoryISODate = this.localeISODateString(new Date().getTime() / 1000)
-  storySource = getCookie('news.hackerer.storySource', 'topstories')
+  storySource = liveStorySource
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
   adSenseTextDisplaySlots = ['4384577737', '4728192669', '9214232583', '9769546608']
@@ -104,7 +106,7 @@ export default class ListStories extends Vue {
     minWidth768.addListener(this.matchMediaWidth)
 
     this.tick()
-    this.loadStories().then(noop)
+    this.loadStoryIds()
   }
 
   sortTitle(day, col) {
@@ -138,6 +140,7 @@ export default class ListStories extends Vue {
     }
   }
   toggleStorySource() {
+    const oldStorySource = this.storySource
     if (this.storySource === 'topstories') {
       this.storySource = 'newstories'
     } else if (this.storySource === 'newstories') {
@@ -146,8 +149,9 @@ export default class ListStories extends Vue {
       this.storySource = 'topstories'
     }
     setCookie('news.hackerer.storySource', this.storySource)
+    liveStorySource = this.storySource
     if (this.countStories() === 0) {
-      this.loadStories()
+      this.loadStoryIds()
     }
   }
   toggleSort(day, col) {
@@ -183,12 +187,13 @@ export default class ListStories extends Vue {
     if (!stories) {
       return []
     }
+    const newestStoryISODate = stories.reduce((a, b) => Math.max(a.time, b.time))
     const scored = stories.sort((a, b) => a.score === b.score ? b.time - a.time : a.score - b.score)
     let lo: any[]
     let hi: any[]
     if (this.storySource === 'askshow') {
-      lo = scored.filter(s => !s.title.startsWith('Show HN'))
-      hi = scored.filter(s => s.title.startsWith('Show HN'))
+      lo = scored.filter(s => !s.url && !s.title.startsWith('Show HN'))
+      hi = scored.filter(s => s.url || s.title.startsWith('Show HN'))
     } else {
       const m = Math.ceil(scored.length / 2)
       lo = scored.slice(0, m)
@@ -207,7 +212,6 @@ export default class ListStories extends Vue {
         hi.reverse()
       }
 
-      const newestStoryISODate = this.localeISODateString(lo[0].time)
       if (newestStoryISODate !== this.newestStoryISODate) {
         this.newestStoryISODate = newestStoryISODate
         this.tick()
@@ -296,7 +300,7 @@ export default class ListStories extends Vue {
     }
   }
 
-  async loadStories() {
+  loadStoryIds() {
     const urlStories: any[] = []
     if (this.storySource === 'askshow') {
       urlStories.push([`https://hacker-news.firebaseio.com/v0/askstories.json`, this.$store.askStories])
@@ -311,21 +315,44 @@ export default class ListStories extends Vue {
         if (status === 200 && responseText) {
           const storyIds = JSON.parse(responseText)
           storyIds.sort((a, b) => b - a)
-          store.length = 0
-
-          this.loaded = false
-          this.rendered = false
-          const result = {remaining: storyIds.length, stories: []}
-          for (const id of storyIds) {
-            this.loadStory(id, result, store)
-          }
+          this.loadStories(storyIds, store).then(noop)
         }
       })
     }
   }
 
+  async loadStories(storyIds, store) {
+    store.length = 0
+
+    this.loaded = false
+    this.rendered = false
+    const result = {remaining: storyIds.length, stories: []}
+    let i = 0
+    for (const id of storyIds) {
+      i++
+      if (i % 10 === 0) {
+        await this.sleep(200)
+      }
+      if (this.storySource !== liveStorySource) {
+        this.loaded = true
+        break
+      }
+      this.loadStory(id, result, store)
+    }
+  }
+
   loadStory(storyId, result, store) {
-    this.getUrl(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`, (status, responseText) => {
+    if (this.storySource !== liveStorySource) {
+      const xhrs = sourceXhrs[this.storySource] || {}
+      for (const [key, xhr] of Object.entries(xhrs)) {
+        xhr.cancel()
+        delete xhrs[key]
+      }
+      this.loaded = true
+      return
+    }
+    this.getStoryUrl(storyId, `https://hacker-news.firebaseio.com/v0/item/${storyId}.json`,
+    (status, responseText) => {
       if (status === 200 && responseText) {
         const story = JSON.parse(responseText)
         if (story) {
@@ -350,6 +377,20 @@ export default class ListStories extends Vue {
         }
       }
     })
+  }
+
+  getStoryUrl(storyId, url, onLoad) {
+    const xhrs = sourceXhrs[this.storySource] || {}
+    if (Object.entries(xhrs).length === 0) {
+      sourceXhrs[this.storySource] = xhrs
+    }
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', url)
+    xhr.onload = () => {
+      onLoad(xhr.status, xhr.responseText)
+    }
+    xhr.send()
+    xhrs[storyId] = xhr
   }
 
   getUrl(url, onLoad) {
@@ -395,6 +436,10 @@ export default class ListStories extends Vue {
     const dd = d.getDate() < 10 ? `0${d.getDate()}` : `${d.getDate()}`
     const s = `${d.getFullYear()}-${mm}-${dd}`
     return s
+  }
+
+  async sleep(millis) {
+    return new Promise( resolve => setTimeout(resolve, millis) )
   }
 
   matchMediaWidth(minWidth768) {
