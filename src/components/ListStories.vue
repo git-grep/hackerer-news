@@ -117,7 +117,7 @@ export default class ListStories extends Vue {
         if (col === 0) {
           return 'Newest'
         } else {
-          return this.hiSort ? 'Recent' : 'Popular New'
+          return this.hiSort ? 'Recent' : 'Recent Popular'
         }
       } else {
         return col === 0 ? 'Newish' : 'Warm'
