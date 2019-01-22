@@ -563,9 +563,9 @@ export default class ListStories extends Vue {
     display: flex;
     flex-direction: row;
   }
-}
-.columns.first {
-  margin-top: 7px;
+  .columns.first {
+    margin-top: 7px;
+  }
 }
 .columns.next {
   margin-top: 4px;
