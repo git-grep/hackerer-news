@@ -1,4 +1,4 @@
-# hn-redux
+# https://Hackerer.news
 
 ## Project setup
 ```
