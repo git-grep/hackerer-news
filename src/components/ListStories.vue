@@ -53,8 +53,8 @@
       </div>
       <div style="margin-top: 4px; font-size: 13px">
         Brought to you by the maker
-        of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep">Gitgrep.com</a>&nbsp;<small>(PH launch)</small>
-        and <a href="https://quicklog.io" target="quicklog">Quicklog.io</a>
+        of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep" class="blue">Gitgrep.com</a>&nbsp;<small>(PH launch)</small>
+        and <a href="https://quicklog.io" target="quicklog" class="blue">Quicklog.io</a>
       </div>
       <div v-for="slot in adSenseTextDisplaySlot(day)" :key="slot">
         <ins class="adsbygoogle" style="display:block"
@@ -587,11 +587,18 @@ td {
     min-width: 1em;
   }
 }
-a:visited {
+a:not(.blue):visited {
   color: #888888;
 }
-a {
+a:not(.blue) {
   text-decoration: none;
   color: #333;
+}
+a.blue:visited {
+  color: #8060d0;
+}
+a.blue {
+  text-decoration: none;
+  color: #8060d0;
 }
 </style>
