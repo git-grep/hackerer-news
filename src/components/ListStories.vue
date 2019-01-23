@@ -231,6 +231,10 @@ export default class ListStories extends Vue {
     let stories: any[] = []
     if (this.storySource === 'askshow') {
       stories = this.$store.askStories.concat(this.$store.showStories)
+      const askShowIds = stories.map(s => s.id)
+      const newAskShow = this.$store.newStories.filter(
+          s => (!s.url || s.title.startsWith('Show HN')) && !askShowIds.includes(s.id))
+      stories = stories.concat(newAskShow)
     } else if (this.storySource === 'newstories') {
       stories = this.$store.newStories
     } else {
@@ -293,8 +297,13 @@ export default class ListStories extends Vue {
     if (this.storySource === 'askshow') {
       urlStories.push([`https://hacker-news.firebaseio.com/v0/askstories.json`, this.$store.askStories])
       urlStories.push([`https://hacker-news.firebaseio.com/v0/showstories.json`, this.$store.showStories])
+      if (this.$store.newStories.length === 0) {
+        urlStories.push([`https://hacker-news.firebaseio.com/v0/newstories.json`, this.$store.newStories])
+      }
     } else if (this.storySource === 'newstories') {
-      urlStories.push([`https://hacker-news.firebaseio.com/v0/newstories.json`, this.$store.newStories])
+      if (this.$store.newStories.length === 0) {
+        urlStories.push([`https://hacker-news.firebaseio.com/v0/newstories.json`, this.$store.newStories])
+      }
     } else {
       urlStories.push([`https://hacker-news.firebaseio.com/v0/topstories.json`, this.$store.topStories])
     }
