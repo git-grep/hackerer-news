@@ -56,23 +56,6 @@
         of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep" class="blue">Gitgrep.com</a>&nbsp;<small>(PH launch)</small>
         and <a href="https://quicklog.io" target="quicklog" class="blue">Quicklog.io</a>
       </div>
-      <div v-for="slot in adSenseTextDisplaySlot(day)" :key="slot">
-        <ins class="adsbygoogle" style="display:block"
-          data-ad-client="ca-pub-7698401419914104"
-          :data-ad-slot="slot"
-          data-ad-format="auto"
-          data-full-width-responsive="true"></ins>
-      </div>
-    </div>
-    <!-- <div class="full-width">
-      <InFeedAdsense
-        data-ad-layout-key="-fg+5n+6t-e7+r"
-        data-ad-client="ca-pub-7698401419914104"
-        data-ad-slot="4384577737">
-      </InFeedAdsense>
-    </div> -->
-    <div v-if="renderedLoadAds()">
-      <!-- ads loading -->
     </div>
   </div>
 </template>
@@ -101,9 +84,6 @@ export default class ListStories extends Vue {
   storySource = getCookie('news.hackerer.storySource', 'topstories')
   loSort = getCookie('news.hackerer.loSort', true)
   hiSort = getCookie('news.hackerer.hiSort', false)
-  adSenseTextDisplaySlots = ['4384577737', '4728192669', '9214232583', '9769546608']
-  adSenseTextOnlySlots = ['2441064384']
-  adSenseDisplayOnlySlots = []
 
   mounted() {
     const minWidth768 = window.matchMedia('(min-width: 768px)')
@@ -436,34 +416,6 @@ export default class ListStories extends Vue {
 
   matchMediaWidth(minWidth768) {
     this.wideLayout = minWidth768.matches
-  }
-
-  adSenseTextDisplaySlot(day) {
-    return []
-    // return this.adSenseTextDisplaySlots[day]
-  }
-
-  renderedLoadAds() {
-    if (!this.loaded) {
-      return false
-    }
-    // window.infolinks_pid = 3158805
-    // window.infolinks_wsid = 0
-    // console.log('Loading ads')
-    // setTimeout(() => {
-    //   const script = document.createElement('script')
-    //   document.body.appendChild(script)
-    //   script.src = "https://resources.infolinks.com/js/infolinks_main.js"
-    //   console.log('Loaded script for ads')
-    // }, 100)
-    setTimeout(() => {
-      if (document.querySelectorAll('ins').length === document.querySelectorAll('ins > *').length) {
-        return
-      }
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
-    }, 100)
-    this.loaded = false
-    return true
   }
 }
 </script>
