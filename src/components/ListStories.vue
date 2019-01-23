@@ -1,5 +1,5 @@
 <template>
-  <div align="center" style="margin-top: -23px">
+  <div align="center" style="margin-top: -23px; margin-bottom: 10px">
     <div v-for="(dateStories, day) in storiesByDate()" :key="'d'+dateStories.date">
       <div class="columns" :class="day === 0 ? 'first' : 'next'" v-if="wideLayout || day === 0">
         <div v-if="wideLayout" :style="dateStyle(day)">{{ dateStories.dateString }}</div>
@@ -53,7 +53,7 @@
       </div>
       <div style="margin-top: 4px; font-size: 13px">
         Brought to you by the maker
-        of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep">Gitgrep.com</a>&nbsp;<small>(launch)</small>
+        of <a href="https://www.producthunt.com/posts/gitgrep-com-the-name-says-it-all" target="gitgrep">Gitgrep.com</a>&nbsp;<small>(PH launch)</small>
         and <a href="https://quicklog.io" target="quicklog">Quicklog.io</a>
       </div>
       <div v-for="slot in adSenseTextDisplaySlot(day)" :key="slot">
