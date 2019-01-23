@@ -6,7 +6,7 @@
         <div class="right-time">{{ currentTime(day) }}</div>
       </div>
       <div class="story-columns">
-        <table style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
+        <table :class="`col${col} ${storySource}`" style="flex: 1" v-for="(stories, col) in colStories(dateStories.stories, day)" :key="col">
           <div class="columns next" v-if="stories.length && !wideLayout">
             <div :style="dateStyle(1)">{{ dateStories.dateString }}</div>
           </div>
@@ -581,6 +581,11 @@ td {
   text-overflow: ellipsis;
   font-size: 13px;
   font-family: sans-serif;
+}
+@media(min-width: 768px) {
+  table.col0:not(.askshow) td {
+    min-width: 1em;
+  }
 }
 a:visited {
   color: #888888;
